@@ -26,60 +26,64 @@
 
 namespace eleveldb {
 
-
 /**
  * Autoinitializing mutex object
  */
-class Mutex
-{
-protected:
+class Mutex {
+  protected:
     pthread_mutex_t m_Mutex;
 
-public:
-    Mutex() {pthread_mutex_init(&m_Mutex, NULL);};
+  public:
+    Mutex() {
+        pthread_mutex_init(&m_Mutex, NULL);
+    };
 
-    ~Mutex() {pthread_mutex_destroy(&m_Mutex);};
+    ~Mutex() {
+        pthread_mutex_destroy(&m_Mutex);
+    };
 
-    pthread_mutex_t & get() {return(m_Mutex);};
+    pthread_mutex_t &get() {
+        return (m_Mutex);
+    };
 
-//    pthread_mutex_t * operator() {return(&m_Mutex);};
+    //    pthread_mutex_t * operator() {return(&m_Mutex);};
 
-    void Lock() {pthread_mutex_lock(&m_Mutex);};
+    void Lock() {
+        pthread_mutex_lock(&m_Mutex);
+    };
 
-    void Unlock() {pthread_mutex_unlock(&m_Mutex);};
+    void Unlock() {
+        pthread_mutex_unlock(&m_Mutex);
+    };
 
-private:
-    Mutex(const Mutex & rhs);             // no copy
-    Mutex & operator=(const Mutex & rhs); // no assignment
+  private:
+    Mutex(const Mutex &rhs);            // no copy
+    Mutex &operator=(const Mutex &rhs); // no assignment
 
-};  // class Mutex
-
+}; // class Mutex
 
 /**
  * Automatic lock and unlock of mutex
  */
-class MutexLock
-{
-protected:
+class MutexLock {
+  protected:
+    Mutex &m_MutexObject;
 
-    Mutex & m_MutexObject;
+  public:
+    explicit MutexLock(Mutex &MutexObject) : m_MutexObject(MutexObject) {
+        m_MutexObject.Lock();
+    };
 
-public:
+    ~MutexLock() {
+        m_MutexObject.Unlock();
+    };
 
-    explicit MutexLock(Mutex & MutexObject)
-        : m_MutexObject(MutexObject)
-    {m_MutexObject.Lock();};
-
-    ~MutexLock() {m_MutexObject.Unlock();};
-
-private:
-
-    MutexLock();                                  // no default constructor
-    MutexLock(const MutexLock & rhs);             // no copy constructor
-    MutexLock & operator=(const MutexLock & rhs); // no assignment constructor
-};  // class MutexLock
+  private:
+    MutexLock();                                // no default constructor
+    MutexLock(const MutexLock &rhs);            // no copy constructor
+    MutexLock &operator=(const MutexLock &rhs); // no assignment constructor
+};                                              // class MutexLock
 
 } // namespace eleveldb
 
-
-#endif  // INCL_MUTEX_H
+#endif // INCL_MUTEX_H

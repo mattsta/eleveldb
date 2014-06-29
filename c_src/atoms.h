@@ -36,7 +36,7 @@ extern ERL_NIF_TERM ATOM_CREATE_IF_MISSING;
 extern ERL_NIF_TERM ATOM_ERROR_IF_EXISTS;
 extern ERL_NIF_TERM ATOM_WRITE_BUFFER_SIZE;
 extern ERL_NIF_TERM ATOM_MAX_OPEN_FILES;
-extern ERL_NIF_TERM ATOM_BLOCK_SIZE;                    /* DEPRECATED */
+extern ERL_NIF_TERM ATOM_BLOCK_SIZE; /* DEPRECATED */
 extern ERL_NIF_TERM ATOM_SST_BLOCK_SIZE;
 extern ERL_NIF_TERM ATOM_BLOCK_RESTART_INTERVAL;
 extern ERL_NIF_TERM ATOM_ERROR_DB_OPEN;
@@ -66,32 +66,25 @@ extern ERL_NIF_TERM ATOM_COMPRESSION;
 extern ERL_NIF_TERM ATOM_ERROR_DB_REPAIR;
 extern ERL_NIF_TERM ATOM_USE_BLOOMFILTER;
 
-}   // namespace eleveldb
-
+} // namespace eleveldb
 
 // Erlang helpers:
 
-ERL_NIF_TERM error_einval(ErlNifEnv* env);
+ERL_NIF_TERM error_einval(ErlNifEnv *env);
 
-template <typename Acc> ERL_NIF_TERM fold(ErlNifEnv* env, ERL_NIF_TERM list,
-                                          ERL_NIF_TERM(*fun)(ErlNifEnv*, ERL_NIF_TERM, Acc&),
-                                          Acc& acc)
-{
+template <typename Acc>
+ERL_NIF_TERM fold(ErlNifEnv *env, ERL_NIF_TERM list,
+                  ERL_NIF_TERM (*fun)(ErlNifEnv *, ERL_NIF_TERM, Acc &),
+                  Acc &acc) {
     ERL_NIF_TERM head, tail = list;
-    while (enif_get_list_cell(env, tail, &head, &tail))
-    {
+    while (enif_get_list_cell(env, tail, &head, &tail)) {
         ERL_NIF_TERM result = fun(env, head, acc);
-        if (result != eleveldb::ATOM_OK)
-        {
+        if (result != eleveldb::ATOM_OK) {
             return result;
         }
     }
 
     return eleveldb::ATOM_OK;
 }
-
-
-
-
 
 #endif // ATOMS_H
